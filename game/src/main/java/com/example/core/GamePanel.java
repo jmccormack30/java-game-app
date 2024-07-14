@@ -1,4 +1,4 @@
-package com.example;
+package com.example.core;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -6,6 +6,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
+
+import com.example.entities.Player;
 
 public class GamePanel extends JPanel implements Runnable {
     // SCREEN SETTINGS
