@@ -11,3 +11,4 @@
 11. Add a zipline mechanic that you can drop from
 12. Add lava
 13. Add multiple rooms and the ability to move between them
+14 Fix run animation
