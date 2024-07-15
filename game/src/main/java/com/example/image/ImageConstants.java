@@ -10,6 +10,7 @@ public class ImageConstants {
     public static final String PLAYER_RUN_RIGHT = "/player/player_run_right.png";
 
     // PLATFORM
+    public static final String PLATFORM_1 = "/platform/platform_1.png";
 
     // COIN
     public static final String COIN_1 = "/coin/coin_1.png";
@@ -20,4 +21,7 @@ public class ImageConstants {
     public static final String COIN_6 = "/coin/coin_6.png";
     public static final String COIN_7 = "/coin/coin_7.png";
     public static final String COIN_8 = "/coin/coin_8.png";
+
+    // BACKGROUND
+    public static final String BACKGROUND = "/background/background.png";
 }

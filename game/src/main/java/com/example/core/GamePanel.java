@@ -14,6 +14,8 @@ import javax.swing.JPanel;
 import com.example.entities.Coin;
 import com.example.entities.Platform;
 import com.example.entities.Player;
+import com.example.image.ImageConstants;
+import com.example.image.ImageUtils;
 
 public class GamePanel extends JPanel implements Runnable {
     // SCREEN SETTINGS
@@ -42,6 +44,8 @@ public class GamePanel extends JPanel implements Runnable {
     public List<Platform> platformObjs;
     public List<Coin> coinObjs;
 
+    BufferedImage background;
+
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.BLACK);
@@ -51,6 +55,8 @@ public class GamePanel extends JPanel implements Runnable {
 
         platformObjs = createPlatforms();
         coinObjs = createCoins();
+
+        background = ImageUtils.getBufferedImage(ImageConstants.BACKGROUND);
     }
 
     public void startGameThread() {
@@ -86,6 +92,7 @@ public class GamePanel extends JPanel implements Runnable {
         super.paintComponent(g);
         Graphics2D graphics2d = (Graphics2D)g;
 
+        graphics2d.drawImage(background, 0, 0, 1280, 896, null);
         platformObjs.forEach(p -> p.draw(graphics2d));
         coinObjs.forEach(c -> c.draw(graphics2d));
         player.draw(graphics2d);

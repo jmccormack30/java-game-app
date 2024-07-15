@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import com.example.core.GamePanel;
+import com.example.image.ImageConstants;
+import com.example.image.ImageUtils;
 
 public class Platform extends Entity {
 
@@ -18,6 +20,8 @@ public class Platform extends Entity {
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, width, height);
         g.dispose();
+
+        image = ImageUtils.getBufferedImage(ImageConstants.PLATFORM_1);
     }
 
     @Override
@@ -27,6 +31,27 @@ public class Platform extends Entity {
 
     @Override
     public void draw(Graphics2D g) {
-        g.drawImage(image, xPos, yPos, width, height, null);
+        if (width >= height) {
+            for (int i = 0; i < width; i+=50) {
+                int x = xPos + i;
+                int curWidth = 50;
+                int remainingWidth = ((xPos + width) - x);
+                if (remainingWidth < 50) {
+                    curWidth = remainingWidth;
+                }
+                g.drawImage(image, x, yPos, curWidth, height, null);
+            }
+        }
+        else {
+            for (int i = 0; i < height; i+=50) {
+                int y = yPos + i;
+                int curHeight = 50;
+                int remainingHeight = ((yPos + height) - y);
+                if (remainingHeight < 50) {
+                    curHeight = remainingHeight;
+                }
+                g.drawImage(image, xPos, y, width, curHeight, null);
+            }
+        }
     }
 }
