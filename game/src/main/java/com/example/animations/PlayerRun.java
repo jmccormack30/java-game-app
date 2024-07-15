@@ -13,30 +13,21 @@ public class PlayerRun extends PlayerAnimation {
     
     public PlayerRun() {
         this.frameIndex = 0;
-        this.totalFrames = 18;
+        this.totalFrames = 28;
 
         frameActionMap = new HashMap<>() {{
-            put(0, Player.Action.JUMP);
-            put(1, Player.Action.JUMP);
-            put(2, Player.Action.JUMP);
-            put(3, Player.Action.JUMP);
-            put(4, Player.Action.JUMP);
-            put(5, Player.Action.JUMP);
-
-            put(6, Player.Action.IDLE);
-            put(7, Player.Action.IDLE);
-            put(8, Player.Action.IDLE);
-
-            put(9, Player.Action.RUN);
-            put(10, Player.Action.RUN);
-            put(11, Player.Action.RUN);
-            put(12, Player.Action.RUN);
-            put(13, Player.Action.RUN);
-            put(14, Player.Action.RUN);
-
-            put(15, Player.Action.IDLE);
-            put(16, Player.Action.IDLE);
-            put(17, Player.Action.IDLE);
+            for (int i = 0; i < 9; i++) {
+                put(i, Player.Action.JUMP);
+            }
+            for (int i = 9; i < 14; i++) {
+                put(i, Player.Action.IDLE);
+            }
+            for (int i = 14; i < 23; i++) {
+                put(i, Player.Action.RUN);
+            }
+            for (int i = 23; i < 28; i++) {
+                put(i, Player.Action.IDLE);
+            }
         }};
     }
 

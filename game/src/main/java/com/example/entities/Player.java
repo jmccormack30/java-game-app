@@ -20,13 +20,11 @@ public class Player extends Entity implements Gravitational {
     public static Map<Action, BufferedImage> actionImageMapLeft;
     public static Map<Action, BufferedImage> actionImageMapRight;
 
-    private int speed = 10;
+    private int speed;
     private int jumpHeight = 275;
 
     private Direction direction;
     private int jumpEnd;
-
-    private boolean onPlatform = false;
 
     private boolean jumping;
     private boolean grounded = true;
@@ -43,7 +41,7 @@ public class Player extends Entity implements Gravitational {
     }
 
     public Player(int xPos, int yPos, KeyHandler keyHandler, GamePanel gamePanel) {
-        this(xPos, yPos, 9,  Direction.RIGHT, keyHandler, gamePanel);
+        this(xPos, yPos, 8,  Direction.RIGHT, keyHandler, gamePanel);
     }
 
     public Player(int xPos, int yPos, int speed, Direction direction, KeyHandler keyHandler, GamePanel gamePanel) {
@@ -80,6 +78,17 @@ public class Player extends Entity implements Gravitational {
                 updateRelativeToPlatform(p);
             }
         });
+
+        Coin coinToRemove = null;
+        for (Coin coin: gamePanel.coinObjs) {
+            if (isCollision(coin)) {
+                coinToRemove = coin;
+                break;
+            }
+        }
+        if (coinToRemove != null) {
+            gamePanel.coinObjs.remove(coinToRemove);
+        }
 
         movingHorizontal = (curX != xPos);
         grounded = (curY == yPos);
@@ -209,34 +218,36 @@ public class Player extends Entity implements Gravitational {
         yPos += 17;
     }
 
-    public boolean isCollision(Platform platform) {
+    public boolean isCollision(Entity other) {
+        return isCollision(other.getX(), other.getY(), other.getWidth(), other.getHeight());
+    }
+
+    public boolean isCollision(int objX, int objY, int objWidth, int objHeight) {
         int playerX = xPos;
         int playerY = yPos;
         int playerWidth = width;
         int playerHeight = height;
 
-        int platformX = platform.getX();
-        int platformY = platform.getY();
-        int platformWidth = platform.getWidth();
-        int platformHeight = platform.getHeight();
+        int objRight = (objX + objWidth);
+        int objBottom = (objY + objHeight);
 
-        // Player is above platform
-        if (playerY + playerHeight <= platformY) {
+        // Player is above object
+        if (playerY + playerHeight <= objY) {
             return false;
         }
 
-        // Player is below platform
-        if (playerY >= platformY + platformHeight) {
+        // Player is below object
+        if (playerY >= objBottom) {
             return false;
         }
 
-        // Player is to the left of platform
-        if (playerX + playerWidth <= platformX) {
+        // Player is to the left of object
+        if (playerX + playerWidth <= objX) {
             return false;
         }
 
-        // Player is to the right of platform
-        if (playerX >= platformX + platformWidth) {
+        // Player is to the right of object
+        if (playerX >= objRight) {
             return false;
         }
 
