@@ -1,32 +1,34 @@
-package com.example.core;
+package com.example.entities;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
+import java.awt.Graphics2D;
 
-import javax.imageio.ImageIO;
+import com.example.core.GamePanel;
+import com.example.core.KeyHandler;
 
 public abstract class Entity {
     protected int xPos;
     protected int yPos;
     protected int width;
     protected int height;
-    protected BufferedImage image;
     protected KeyHandler keyHandler;
     protected GamePanel gamePanel;
 
-    public Entity(int xPos, int yPos, int width, int height, KeyHandler keyHandler, GamePanel gamePanel) {
-        this(xPos, yPos, width, height, null, keyHandler, gamePanel);
+    public Entity(int xPos, int yPos, int width, int height, GamePanel gamePanel) {
+        this(xPos, yPos, width, height, null, gamePanel);
     }
 
-    public Entity(int xPos, int yPos, int width, int height, String imageFilePath, KeyHandler keyHandler, GamePanel gamePanel) {
+    public Entity(int xPos, int yPos, int width, int height, KeyHandler keyHandler, GamePanel gamePanel) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.width = width;
         this.height = height;
         this.keyHandler = keyHandler;
         this.gamePanel = gamePanel;
-        setImage(imageFilePath);
     }
+
+    public abstract void update();
+
+    public abstract void draw(Graphics2D g);
 
     public int getX() {
         return xPos;
@@ -60,21 +62,6 @@ public abstract class Entity {
         this.height = height;
     }
 
-    public BufferedImage getImage() {
-        return image;
-    }
-
-    public void setImage(String imageFilePath) {
-        if (imageFilePath != null) {
-            try {
-                image = ImageIO.read(getClass().getResourceAsStream(imageFilePath));
-            }
-            catch (IOException ioe) {
-                ioe.printStackTrace();
-            }
-        }
-    }
-
     public KeyHandler getKeyHandler() {
         return keyHandler;
     }
@@ -104,9 +91,5 @@ public abstract class Entity {
         if (yPos > (gamePanel.screenHeight - this.height)) {
             yPos = (gamePanel.screenHeight - this.height);
         }
-    }
-
-    public void applyGravity() {
-        yPos += 17;
     }
 }

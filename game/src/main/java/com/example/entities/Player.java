@@ -7,13 +7,12 @@ import java.util.Map;
 
 import com.example.animations.PlayerAnimation;
 import com.example.animations.PlayerRun;
-import com.example.core.Entity;
 import com.example.core.GamePanel;
 import com.example.core.KeyHandler;
 import com.example.image.ImageConstants;
 import com.example.image.ImageUtils;
 
-public class Player extends Entity {
+public class Player extends Entity implements Gravitational {
 
     public enum Direction { LEFT, RIGHT }
     public enum Action { IDLE, RUN, JUMP };
@@ -26,6 +25,8 @@ public class Player extends Entity {
 
     private Direction direction;
     private int jumpEnd;
+
+    private boolean onPlatform = false;
 
     private boolean jumping;
     private boolean grounded = true;
@@ -46,12 +47,13 @@ public class Player extends Entity {
     }
 
     public Player(int xPos, int yPos, int speed, Direction direction, KeyHandler keyHandler, GamePanel gamePanel) {
-        super(xPos, yPos, 96, 96, null, keyHandler, gamePanel);
+        super(xPos, yPos, 78, 96, keyHandler, gamePanel);
         this.speed = speed;
         this.direction = direction;
         runAnimation = new PlayerRun();
     }
 
+    @Override
     public void update() {
         // LEFT RIGHT
         int curX = xPos;
@@ -64,12 +66,22 @@ public class Player extends Entity {
             xPos += speed;
         }
         updateForOutOfBoundsLeftRight();
-        movingHorizontal = (curX != xPos);
 
         // UP DOWN
         int curY = yPos;
+        if (jumping) {
+            handleJump();
+        }
         applyGravity();
         updateForOutOfBoundsBelow();
+
+        gamePanel.platformObjs.forEach(p -> {
+            if (isCollision(p)) {
+                updateRelativeToPlatform(p);
+            }
+        });
+
+        movingHorizontal = (curX != xPos);
         grounded = (curY == yPos);
         falling = (yPos > curY);
 
@@ -81,14 +93,9 @@ public class Player extends Entity {
                 jumpEnd = (yPos - jumpHeight);
             }
         }
-        // if (keyHandler.downPressed) {
-        //     yPos += speed;
-        // }
-        if (jumping) {
-            handleJump();
-        }
     }
 
+    @Override
     public void draw(Graphics2D g) {
         BufferedImage currentImage = null;
 
@@ -196,5 +203,132 @@ public class Player extends Entity {
 
     public void setJumpHeight(int jumpHeight) {
         this.jumpHeight = jumpHeight;
+    }
+
+    public void applyGravity() {
+        yPos += 17;
+    }
+
+    public boolean isCollision(Platform platform) {
+        int playerX = xPos;
+        int playerY = yPos;
+        int playerWidth = width;
+        int playerHeight = height;
+
+        int platformX = platform.getX();
+        int platformY = platform.getY();
+        int platformWidth = platform.getWidth();
+        int platformHeight = platform.getHeight();
+
+        // Player is above platform
+        if (playerY + playerHeight <= platformY) {
+            return false;
+        }
+
+        // Player is below platform
+        if (playerY >= platformY + platformHeight) {
+            return false;
+        }
+
+        // Player is to the left of platform
+        if (playerX + playerWidth <= platformX) {
+            return false;
+        }
+
+        // Player is to the right of platform
+        if (playerX >= platformX + platformWidth) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public void updateRelativeToPlatform(Platform platform) {
+        int playerX = xPos;
+        int playerY = yPos;
+        int playerWidth = width;
+        int playerHeight = height;
+
+        int platformX = platform.getX();
+        int platformY = platform.getY();
+        int platformWidth = platform.getWidth();
+        int platformHeight = platform.getHeight();
+
+        boolean isLeftSideCollision = isLeftSideCollision(playerX, playerWidth, platformX);
+        boolean isRightSideCollision = isRightSideCollision(playerX, playerWidth, platformX, platformWidth);
+        boolean isTopSideCollision = isTopSideCollision(playerY, playerHeight, platformY);
+        boolean isBottomSideCollision = isBottomSideCollision(playerY, playerHeight, platformY, platformHeight);
+
+        if (isBottomSideCollision && isLeftSideCollision) {
+            if (playerY > platformY + platformHeight - 12) {
+                yPos = platformY + platformHeight;
+                jumping = false;
+                return;
+            }
+            else {
+                xPos = platformX + platformWidth;
+            }
+        }
+        else if (isBottomSideCollision && isRightSideCollision) {
+            if (playerY > platformY + platformHeight - 12) {
+                yPos = platformY + platformHeight;
+                jumping = false;
+                return;
+            }
+            else {
+                xPos = platformX + platformWidth;
+            }
+        }
+        else if (isBottomSideCollision && jumping) {
+            yPos = platformY + platformHeight;
+            jumping = false;
+            return;
+        }
+
+        if (isTopSideCollision && isLeftSideCollision) {
+            // move to top
+            if (playerY + playerHeight < platformY + 18 && !jumping) {
+                yPos = platformY - playerHeight;
+            }
+            // move to left
+            else {
+                xPos = platformX - playerWidth;
+            }
+        }
+        else if (isTopSideCollision && isRightSideCollision) {
+            // move to top
+            if (playerY + playerHeight < platformY + 18 && !jumping) {
+                yPos = platformY - playerHeight;
+            }
+            // move to right
+            else {
+                xPos = platformX + platformWidth;
+            }
+        }
+        else if (isTopSideCollision && !jumping) {
+            yPos = platformY - playerHeight;
+        }
+        else if (isLeftSideCollision) {
+            xPos = platformX - playerWidth;
+        }
+        else if (isRightSideCollision) {
+            xPos = platformX + platformWidth;
+        }
+    }
+
+    public boolean isLeftSideCollision(int playerX, int playerWidth, int platformX) {
+        return ((playerX < platformX) && (playerX + playerWidth > platformX));
+    }
+
+    public boolean isRightSideCollision(int playerX, int playerWidth, int platformX, int platformWidth) {
+        return ((playerX < platformX + platformWidth) && (playerX + playerWidth > platformX + platformWidth));
+    }
+
+    public boolean isTopSideCollision(int playerY, int playerHeight, int platformY) {
+        return ((playerY < platformY) && (playerY + playerHeight > platformY));
+    }
+
+    public boolean isBottomSideCollision(int playerY, int playerHeight, int platformY, int platformHeight) {
+        return ((playerY < platformY + platformHeight) && (playerY + playerHeight > platformY + platformHeight));
     }
 }
