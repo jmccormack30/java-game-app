@@ -1,0 +1,13 @@
+1. Make coins collectable
+2. Learn how to add sound effects
+3. Add the ability for the player to crouch and move while doing sound
+4. Add a sword attack and animation
+5. Add a simple enemy with a basic AI pattern
+6. Add functionality for killing the enemy with the sword
+7. Add the ability for the player to take damage 
+8. Add the ability for the player to die
+9. Add the ability to slide down walls and jump from them
+10. Add a bow and arrow or gun weapon for the player with projectile attack
+11. Add a zipline mechanic that you can drop from
+12. Add lava
+13. Add multiple rooms and the ability to move between them
